@@ -7,47 +7,58 @@
 
 using namespace std;
 
-void scan_algo(vector<int> queries, int init)
+void scan_algo_asc(vector<int> queries, int init);
+void scan_algo_desc(vector<int> queries, int init);
+
+void scan_algo_desc(vector<int> queries, int init)
 {
     int ans = 0; 
-    bool * checked = new bool(queries.size());
+    bool * checked = new bool[queries.size()]();
 
     sort(queries.begin(), queries.end());
     //encontrar el inicial
-    int i = 0; bool started = false;
-    while (i<queries.size() && !started)
+    int i = queries.size()-1; 
+    bool started = false;
+    while (i>=0 && !started)
     {
-        if (queries[i] >= init){
+        if (queries[i] <= init){
             started = true;
         }
-        i+=1;
+        i-=1;
     }
 
+    cout<<"Ini: "<<i+1<<endl;
     //sumar el costo de moverse al primero
-    int prev = i-1;
+    int prev = i+1;
     int prevValue = queries[prev];
-    ans +=prevValue-init;
+    ans +=init-prevValue;
     checked[prev] = true;
-    //sube
-    for (prev = i; prev < queries.size(); prev++)
+
+    //baja
+    for (prev = i; prev > 0; prev--)
     {
         checked[prev] = true;
-        
-        ans+= queries[prev]-prevValue;
-        prevValue = queries[prev];
+        ans+= prevValue - queries[prev-1];
+        prevValue = queries[prev-1];
     }
-    //baja
-    for (prev = queries.size()-1; prev >= 0; prev--)
+
+    //volver a cero
+    ans+=queries[0];
+    prevValue = 0;
+
+    //sube
+    for (prev = i; prev < queries.size(); prev++)
     {
         if (!checked[prev])
         {
             checked[prev] = true;
-            ans+= prevValue - queries[prev-1];
-            prevValue = queries[prev-1];
+            
+            ans+= queries[prev]-prevValue;
+            prevValue = queries[prev];
         }
     }
-    //volver a cero
-    ans+=queries[0];
+
+    
     
     cout<<"Inicia: "<<init<<endl;
     cout<<ans<<endl;
@@ -74,7 +85,7 @@ int main()
             {
                 queries.push_back(stoi(val));    
             }
-            scan_algo(queries, init);
+            scan_algo_desc(queries, init);
         }
 
         file.close();
@@ -83,4 +94,52 @@ int main()
         cerr << "ERROR OPENING PROGRAM FILE" << endl; 
     } 
     return 0;
+}
+
+
+void scan_algo_asc(vector<int> queries, int init)
+{
+    int ans = 0; 
+    bool * checked = new bool[queries.size()]();
+
+    sort(queries.begin(), queries.end());
+    //encontrar el inicial
+    int i = 0; bool started = false;
+    while (i<queries.size() && !started)
+    {
+        if (queries[i] >= init){
+            started = true;
+        }
+        i+=1;
+    }
+
+    //sumar el costo de moverse al primero
+    int prev = i-1;
+    int prevValue = queries[prev];
+    ans +=prevValue-init;
+    checked[prev] = true;
+    //sube
+    for (prev = i; prev < queries.size(); prev++)
+    {
+        checked[prev] = true;
+        
+        ans+= queries[prev]-prevValue;
+        prevValue = queries[prev];
+    }
+    //baja
+    for (prev = queries.size()-1; prev > 0; prev--)
+    {
+        if (!checked[prev])
+        {
+            checked[prev] = true;
+            ans+= prevValue - queries[prev-1];
+            prevValue = queries[prev-1];
+        }
+    }
+
+    //volver a cero
+    ans+=queries[0];
+    
+    cout<<"Inicia: "<<init<<endl;
+    cout<<ans<<endl;
 }

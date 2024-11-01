@@ -12,7 +12,6 @@ void scan_algo(vector<int> queries, int init)
     int ans = 0; 
     bool * checked = new bool[queries.size()]();
 
-
     sort(queries.begin(), queries.end());
     //encontrar el inicial
     int i = 0; bool started = false;
@@ -37,12 +36,14 @@ void scan_algo(vector<int> queries, int init)
         ans+= queries[prev]-prevValue;
         prevValue = queries[prev];
     }
+
     
     //baja solo si tiene que bajar
     prevValue = 0;
     if (!checked[0]){
         ans+=queries[queries.size()-1]; //suma la distancia desde arriba a abajo
     }
+
     //sube
     for (prev = 0; prev < queries.size(); prev++)
     {

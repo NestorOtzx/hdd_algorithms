@@ -46,6 +46,8 @@ void scan_algo(vector<int> queries, int init)
             prevValue = queries[prev-1];
         }
     }
+    //volver a cero
+    ans+=queries[0];
     
     cout<<"Inicia: "<<init<<endl;
     cout<<ans<<endl;

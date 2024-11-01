@@ -31,7 +31,6 @@ void scan_algo(vector<int> queries, int init)
     //sube
     for (prev = i; prev < queries.size(); prev++)
     {
-        cout<<"ans 1: "<<ans<<endl;
         checked[prev] = true;
         
         ans+= queries[prev]-prevValue;
@@ -42,13 +41,13 @@ void scan_algo(vector<int> queries, int init)
     {
         if (!checked[prev])
         {
-            cout<<"ans 2: "<<ans<<endl;
             checked[prev] = true;
             ans+= prevValue - queries[prev-1];
             prevValue = queries[prev-1];
         }
     }
     
+    cout<<"Inicia: "<<init<<endl;
     cout<<ans<<endl;
 }
 
@@ -60,18 +59,23 @@ int main()
 
     if (file.is_open()) { 
         string line;
-        getline(file, line);
-        std::stringstream ss(line);
-        string val;
-        ss>>val;
-        int init = stoi(val);
-        cout<<"Inicia: "<<init<<endl;
-        vector<int> queries;
-        while (ss>>val)
+       
+        while(getline(file, line))
         {
-            queries.push_back(stoi(val));    
+            std::stringstream ss(line);
+            string val;
+            ss>>val;
+            int init = stoi(val);
+            
+            vector<int> queries;
+            while (ss>>val)
+            {
+                queries.push_back(stoi(val));    
+            }
+            scan_algo(queries, init);
         }
-        scan_algo(queries, init);
+
+        file.close();
     } 
     else { 
         cerr << "ERROR OPENING PROGRAM FILE" << endl; 

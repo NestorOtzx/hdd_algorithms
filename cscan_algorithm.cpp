@@ -10,7 +10,8 @@ using namespace std;
 void scan_algo(vector<int> queries, int init)
 {
     int ans = 0; 
-    bool * checked = new bool(queries.size());
+    bool * checked = new bool[queries.size()]();
+
 
     sort(queries.begin(), queries.end());
     //encontrar el inicial
@@ -31,25 +32,33 @@ void scan_algo(vector<int> queries, int init)
     //sube
     for (prev = i; prev < queries.size(); prev++)
     {
-        cout<<"ans 1: "<<ans<<endl;
         checked[prev] = true;
         
         ans+= queries[prev]-prevValue;
         prevValue = queries[prev];
     }
-    //baja
-    for (prev = queries.size()-1; prev >= 0; prev--)
+    
+    //baja solo si tiene que bajar
+    prevValue = 0;
+    if (!checked[0]){
+        ans+=queries[queries.size()-1]; //suma la distancia desde arriba a abajo
+    }
+    //sube
+    for (prev = 0; prev < queries.size(); prev++)
     {
         if (!checked[prev])
         {
-            cout<<"ans 2: "<<ans<<endl;
             checked[prev] = true;
-            ans+= prevValue - queries[prev-1];
-            prevValue = queries[prev-1];
+            
+            ans+= queries[prev]-prevValue;
+            prevValue = queries[prev];
         }
     }
     
-    cout<<ans<<endl;
+    delete checked;
+    cout<<"Inicia: "<<init<<endl;
+    cout<<"Resultado: "<<ans<<endl;
+    
 }
 
 
@@ -60,18 +69,23 @@ int main()
 
     if (file.is_open()) { 
         string line;
-        getline(file, line);
-        std::stringstream ss(line);
-        string val;
-        ss>>val;
-        int init = stoi(val);
-        cout<<"Inicia: "<<init<<endl;
-        vector<int> queries;
-        while (ss>>val)
+       
+        while(getline(file, line))
         {
-            queries.push_back(stoi(val));    
+            std::stringstream ss(line);
+            string val;
+            ss>>val;
+            int init = stoi(val);
+            
+            vector<int> queries;
+            while (ss>>val)
+            {
+                queries.push_back(stoi(val));    
+            }
+            scan_algo(queries, init);
         }
-        scan_algo(queries, init);
+
+        file.close();
     } 
     else { 
         cerr << "ERROR OPENING PROGRAM FILE" << endl; 

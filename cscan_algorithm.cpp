@@ -7,12 +7,13 @@
 
 using namespace std;
 
-void scan_algo(vector<int> queries, int init)
+void cscan_algo_asc(vector<int> queries, int init)
 {
     int ans = 0; 
     bool * checked = new bool[queries.size()]();
 
     sort(queries.begin(), queries.end());
+    
     //encontrar el inicial
     int i = 0; bool started = false;
     while (i<queries.size() && !started)
@@ -28,6 +29,7 @@ void scan_algo(vector<int> queries, int init)
     int prevValue = queries[prev];
     ans +=prevValue-init;
     checked[prev] = true;
+    
     //sube
     for (prev = i; prev < queries.size(); prev++)
     {
@@ -37,7 +39,6 @@ void scan_algo(vector<int> queries, int init)
         prevValue = queries[prev];
     }
 
-    
     //baja solo si tiene que bajar
     prevValue = 0;
     if (!checked[0]){
@@ -62,34 +63,70 @@ void scan_algo(vector<int> queries, int init)
     
 }
 
+void cscan_algo_desc(vector<int> queries, int init) { 
+	int ans = 0; 
+	sort(queries.begin(), queries.end(), greater<int>());
+	
+	// Encontrar el inicial 
+	int i = 0; 
+	while (i < queries.size() && queries[i] > init) { 
+		i++; 
+	}
+	
+	// Baja 
+	int prevValue = init;
+	for (int j = i; j < queries.size(); j++) { 
+		ans += prevValue - queries[j]; 
+		prevValue = queries[j]; 
+	}
+	
+	// Regresar al punto superior 
+	ans += queries[0] - prevValue; 
+	prevValue = queries[0];
+	
+	// Continuar hacia abajo
+	for (int j = 0; j < i; j++) { 
+		ans += prevValue - queries[j]; 
+		prevValue = queries[j];
+	}
+	
+	cout << "Inicia: " << init << endl; 
+	cout << "Resultado: " << ans <<endl;
+}
 
-int main()
-{
+int main() {
     std::ifstream file("input.txt");
-    string line; 
+    std::string line; 
 
     if (file.is_open()) { 
-        string line;
-       
-        while(getline(file, line))
-        {
+        while(getline(file, line)) {
             std::stringstream ss(line);
-            string val;
-            ss>>val;
-            int init = stoi(val);
+            std::string val;
             
-            vector<int> queries;
-            while (ss>>val)
-            {
-                queries.push_back(stoi(val));    
+            ss >> val;
+            int init = std::stoi(val);
+            
+            ss >> val;
+            int direc = std::stoi(val);
+            
+            std::vector<int> queries;
+            while (ss >> val) {
+                queries.push_back(std::stoi(val));    
             }
-            scan_algo(queries, init);
+            
+            if (direc == 0){
+            	cscan_algo_desc(queries, init);
+            }
+            
+            if (direc == 1){
+            	cscan_algo_asc(queries, init);
+            }
         }
-
         file.close();
-    } 
-    else { 
-        cerr << "ERROR OPENING PROGRAM FILE" << endl; 
-    } 
+        
+    } else { 
+        std::cerr << "ERROR OPENING PROGRAM FILE" << std::endl; 
+    }
+    
     return 0;
 }
